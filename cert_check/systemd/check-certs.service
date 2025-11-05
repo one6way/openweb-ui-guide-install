@@ -1,0 +1,19 @@
+[Unit]
+Description=TLS certificate checker (on-host)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/cert_check
+ExecStart=/opt/cert_check/check_certs.sh -f /opt/cert_check/targets.txt -d 30 -q
+Environment=MAIL_TO=root@localhost
+Environment=MAIL_FROM=cert-checker@%H
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+

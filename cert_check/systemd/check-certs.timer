@@ -1,0 +1,11 @@
+[Unit]
+Description=Run TLS certificate checker periodically
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+

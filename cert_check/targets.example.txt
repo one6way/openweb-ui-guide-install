@@ -1,0 +1,15 @@
+# Copy this file to targets.txt and adjust for your environment
+#
+# Format per line:
+# host[:port][,sni=example.com][,days=NN]
+
+# Public example (safe):
+example.com
+
+# IP with SNI placeholder:
+10.0.0.5:443,sni=your-service.example.com
+
+# Custom threshold example (15 days):
+staging.example.com:443,days=15
+
+

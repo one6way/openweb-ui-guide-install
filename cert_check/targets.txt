@@ -1,0 +1,17 @@
+# One target per line. Comments start with '#'. Blank lines are ignored.
+# Format: host[:port][,sni=example.com][,days=NN]
+
+# Examples:
+# localhost service with default 443
+localhost
+
+# Explicit port
+# my.internal.service:8443
+
+# IP with SNI override (SNI=public name served by the cert)
+# 10.0.12.34:443,sni=api.example.com
+
+# Tighter threshold for a specific host
+# staging.example.com:443,days=10
+
+
