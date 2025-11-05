@@ -1,52 +1,52 @@
 #!/usr/bin/env sh
 
-# Portable TLS certificate checker for running directly on a server.
-# - Reads targets from a file (default: targets.txt)
-# - For each host:port, fetches the leaf certificate via openssl
-# - Computes days left and sends an email alert if below threshold
+# Портативная проверка TLS-сертификатов для запуска прямо на сервере.
+# - Читает цели из файла (по умолчанию: targets.txt)
+# - Для каждого host:port получает листовой сертификат через openssl
+# - Считает оставшиеся дни и отправляет письмо, если ниже порога
 #
-# Requirements: openssl, date (GNU coreutils recommended), awk, sed
-# Optional: mailx or mail command for sending emails
+# Требования: openssl, date (желательно GNU coreutils), awk, sed
+# Опционально: mailx или mail для отправки писем
 
 set -eu
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 
-# Defaults (can be overridden by env or CLI)
+# Значения по умолчанию (можно переопределить через ENV или флаги CLI)
 TARGETS_FILE="${TARGETS_FILE:-$SCRIPT_DIR/targets.txt}"
 ALERT_DAYS_DEFAULT="${ALERT_DAYS_DEFAULT:-30}"
-# Local mailbox delivery by default: deliver to system user mailbox (readable via `mailx`)
+# По умолчанию локальная доставка: в системный почтовый ящик пользователя (читается через `mailx`)
 MAILBOX_USER_DEFAULT="$(id -un 2>/dev/null || echo root)"
 MAIL_TO="${MAIL_TO:-$MAILBOX_USER_DEFAULT}"
 MAIL_FROM="${MAIL_FROM:-cert-checker@$(hostname -f 2>/dev/null || hostname)}"
 MAIL_SUBJECT_PREFIX="${MAIL_SUBJECT_PREFIX:-[TLS-CERT]}"
-# If true, force local delivery via sendmail and address without domain
+# Если true — принудительно использовать локальную доставку через sendmail и адрес без домена
 MAIL_LOCAL_ONLY="${MAIL_LOCAL_ONLY:-true}"
 QUIET="false"
 
 usage() {
   cat <<EOF
-Usage: $0 [-f targets_file] [-d alert_days] [-q]
+Использование: $0 [-f targets_file] [-d alert_days] [-q]
 
-Options:
-  -f FILE   Path to targets file (default: $TARGETS_FILE)
-  -d DAYS   Alert threshold in days (default: $ALERT_DAYS_DEFAULT)
-  -q        Quiet mode (only errors/alerts)
+Опции:
+  -f FILE   Путь к файлу целей (по умолчанию: $TARGETS_FILE)
+  -d DAYS   Порог оповещения в днях (по умолчанию: $ALERT_DAYS_DEFAULT)
+  -q        Тихий режим (только ошибки/алерты)
 
-Environment overrides:
+Переменные окружения:
   TARGETS_FILE, ALERT_DAYS_DEFAULT, MAIL_TO, MAIL_FROM, MAIL_SUBJECT_PREFIX, MAIL_LOCAL_ONLY
 
-Targets file format:
-  - One entry per line, comments start with '#', blank lines ignored
-  - Format: host[:port][,sni=example.com][,days=NN]
-    Examples:
+Формат файла целей:
+  - По одной записи на строку; строки с '#' — комментарии; пустые строки игнорируются
+  - Формат: host[:port][,sni=example.com][,days=NN]
+    Примеры:
       example.com
       example.com:443
       10.0.0.5:8443,sni=service.example.com
       api.example.com:443,days=15
 
-Exit codes:
-  0 on success, 1 if any checks failed or errors occurred
+Коды выхода:
+  0 — успех; 1 — есть срабатывания или ошибки
 EOF
 }
 
@@ -68,7 +68,7 @@ send_mail() {
   from_addr="$3"
   body="$4"
 
-  # Prefer local delivery via sendmail if MAIL_LOCAL_ONLY=true
+  # Предпочесть локальную доставку через sendmail, если MAIL_LOCAL_ONLY=true
   if [ "$MAIL_LOCAL_ONLY" = "true" ] && [ -x /usr/sbin/sendmail ]; then
     {
       printf "From: %s\n" "$from_addr"
@@ -80,7 +80,7 @@ send_mail() {
     return 0
   fi
 
-  # Otherwise try mailx, then mail, then sendmail
+  # Иначе пробовать mailx, затем mail, затем sendmail
   if have_cmd mailx; then
     printf "%s" "$body" | mailx -a "From: $from_addr" -s "$subject" "$to_addr" || return 1
     return 0
@@ -99,7 +99,7 @@ send_mail() {
     } | /usr/sbin/sendmail -t || return 1
     return 0
   fi
-  warn "No mailer (sendmail/mailx/mail) available to send alerts"
+  warn "Нет почтового клиента (sendmail/mailx/mail) для отправки оповещений"
   return 1
 }
 
@@ -114,7 +114,7 @@ parse_kv() {
 }
 
 parse_hostport() {
-  # input like: host:port or host
+  # вход: host:port или host
   in="$1"
   host=$(printf "%s" "$in" | awk -F',' '{print $1}' | awk -F':' '{print $1}')
   port=$(printf "%s" "$in" | awk -F',' '{print $1}' | awk -F':' '{print $2}')
@@ -124,7 +124,7 @@ parse_hostport() {
 
 openssl_fetch_cert() {
   host="$1"; port="$2"; sni="$3"
-  # We request the leaf cert and pipe to x509
+  # Запрашиваем листовой сертификат и передаём его в x509
   # shellcheck disable=SC3037
   if [ -n "$sni" ]; then
     echo | openssl s_client -servername "$sni" -connect "$host:$port" -showcerts 2>/dev/null |
@@ -136,7 +136,7 @@ openssl_fetch_cert() {
 }
 
 cert_enddate_epoch() {
-  # Reads a PEM cert on stdin, outputs notAfter epoch seconds
+  # Читает PEM-сертификат из stdin, выводит notAfter в секундах эпохи
   openssl x509 -noout -enddate 2>/dev/null | sed 's/notAfter=//' |
     while IFS= read -r line; do
       if date -d "$line" +%s >/dev/null 2>&1; then
@@ -192,9 +192,9 @@ log "Default alert threshold: $ALERT_DAYS_DEFAULT days"
 line_no=0
 while IFS= read -r raw || [ -n "$raw" ]; do
   line_no=$(( line_no + 1 ))
-  # Trim
+  # Обрезка пробелов
   line=$(echo "$raw" | sed 's/^\s\+//;s/\s\+$//')
-  # Skip comments/blank
+  # Пропуск комментариев и пустых строк
   case "$line" in
     "#"*|"") continue ;;
   esac

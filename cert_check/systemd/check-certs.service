@@ -1,5 +1,5 @@
 [Unit]
-Description=TLS certificate checker (on-host)
+Description=Проверка TLS-сертификатов (на сервере)
 Wants=network-online.target
 After=network-online.target
 

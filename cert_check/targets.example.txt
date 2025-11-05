@@ -1,15 +1,15 @@
-# Copy this file to targets.txt and adjust for your environment
+# Скопируйте этот файл в targets.txt и настройте под свою среду
 #
-# Format per line:
+# Формат строки:
 # host[:port][,sni=example.com][,days=NN]
 
-# Public example (safe):
+# Публичный пример (безопасно):
 example.com
 
-# IP with SNI placeholder:
+# IP с указанием SNI:
 10.0.0.5:443,sni=your-service.example.com
 
-# Custom threshold example (15 days):
+# Индивидуальный порог (15 дней):
 staging.example.com:443,days=15
 
 

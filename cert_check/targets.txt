@@ -1,17 +1,17 @@
-# One target per line. Comments start with '#'. Blank lines are ignored.
-# Format: host[:port][,sni=example.com][,days=NN]
+# По одной цели на строку. Комментарии начинаются с '#'. Пустые строки игнорируются.
+# Формат: host[:port][,sni=example.com][,days=NN]
 
-# Examples:
-# localhost service with default 443
+# Примеры:
+# localhost со стандартным портом 443
 localhost
 
-# Explicit port
+# Явный порт
 # my.internal.service:8443
 
-# IP with SNI override (SNI=public name served by the cert)
+# IP с переопределением SNI (SNI=публичное имя из сертификата)
 # 10.0.12.34:443,sni=api.example.com
 
-# Tighter threshold for a specific host
+# Более жёсткий порог для конкретного хоста
 # staging.example.com:443,days=10
 
 
