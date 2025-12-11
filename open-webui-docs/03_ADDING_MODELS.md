@@ -221,14 +221,206 @@ curl http://localhost:8080/api/health
 - `mistral:7b` - качественная модель
 - `qwen2.5:7b` - хорошая поддержка русского
 
-### Команды для скачивания (на машине с интернетом)
+## Специализированные модели для разработки
+
+### Модели для генерации кода
+
+#### DeepSeek Coder (рекомендуется для кода)
+
+- `deepseek-coder:1.3b` - легкая модель для кода (около 1.3GB)
+- `deepseek-coder:6.7b` - средняя модель, отличное качество генерации кода (около 4.1GB)
+- `deepseek-coder:33b` - мощная модель для сложных задач (около 20GB)
+
+**Особенности:**
+- Специализирована на генерации кода на множестве языков программирования
+- Отличное понимание контекста и синтаксиса
+- Поддержка Python, JavaScript, Go, Rust, C++, Java и других языков
+- Хорошо работает с рефакторингом и отладкой кода
+
+**Команды для скачивания:**
+```bash
+ollama pull deepseek-coder:1.3b
+ollama pull deepseek-coder:6.7b
+ollama pull deepseek-coder:33b
+```
+
+#### CodeLlama (от Meta)
+
+- `codellama:7b` - базовая модель для кода (около 3.8GB)
+- `codellama:13b` - улучшенная версия (около 7.3GB)
+- `codellama:34b` - максимальная производительность (около 19GB)
+- `codellama:7b-instruct` - версия с инструкциями (около 3.8GB)
+- `codellama:13b-instruct` - улучшенная версия с инструкциями (около 7.3GB)
+
+**Особенности:**
+- Специализирована на генерации и дополнении кода
+- Поддержка Python, C++, Java, PHP, TypeScript, C#, Bash
+- Хорошо работает с большими контекстами кода
+- Instruct версии лучше понимают инструкции на естественном языке
+
+**Команды для скачивания:**
+```bash
+ollama pull codellama:7b
+ollama pull codellama:13b
+ollama pull codellama:7b-instruct
+ollama pull codellama:13b-instruct
+```
+
+#### Qwen2.5 Coder
+
+- `qwen2.5-coder:1.5b` - легкая модель (около 1GB)
+- `qwen2.5-coder:7b` - средняя модель (около 4.5GB)
+- `qwen2.5-coder:32b` - мощная модель (около 18GB)
+
+**Особенности:**
+- Хорошая поддержка русского языка
+- Отличное качество генерации кода
+- Поддержка множества языков программирования
+
+**Команды для скачивания:**
+```bash
+ollama pull qwen2.5-coder:1.5b
+ollama pull qwen2.5-coder:7b
+ollama pull qwen2.5-coder:32b
+```
+
+### Модели для SQL запросов
+
+#### SQLCoder
+
+- `sqlcoder:7b` - специализированная модель для SQL (около 4.5GB)
+
+**Особенности:**
+- Специализирована на генерации и оптимизации SQL запросов
+- Отличное понимание структуры баз данных
+- Поддержка различных диалектов SQL (PostgreSQL, MySQL, SQLite и др.)
+- Умеет анализировать схемы БД и генерировать корректные запросы
+
+**Команды для скачивания:**
+```bash
+ollama pull sqlcoder:7b
+```
+
+#### CodeLlama для SQL
+
+- `codellama:7b` и `codellama:13b` также хорошо работают с SQL запросами
+
+### Модели для технических задач и DevOps
+
+#### Mistral (универсальная, хорошо для технических задач)
+
+- `mistral:7b` - базовая версия (около 4.1GB)
+- `mistral:7b-instruct` - версия с инструкциями (около 4.1GB)
+
+**Особенности:**
+- Отличное понимание технических концепций
+- Хорошо работает с конфигурационными файлами (YAML, JSON, TOML)
+- Понимает Docker, Kubernetes, CI/CD концепции
+- Может помочь с написанием скриптов и автоматизацией
+
+**Команды для скачивания:**
+```bash
+ollama pull mistral:7b
+ollama pull mistral:7b-instruct
+```
+
+#### Llama 3.1/3.2 (универсальные, хороши для технических задач)
+
+- `llama3.1:8b` - хороший баланс для технических задач (около 4.7GB)
+- `llama3.2:3b` - легкая версия (около 2GB)
+
+**Особенности:**
+- Хорошее понимание технической документации
+- Может помочь с анализом логов и диагностикой
+- Понимает системное администрирование
+
+**Команды для скачивания:**
+```bash
+ollama pull llama3.1:8b
+ollama pull llama3.2:3b
+```
+
+### Рекомендуемые комбинации для разных задач
+
+#### Для генерации кода (рекомендуется)
+```bash
+# Легкий вариант
+ollama pull deepseek-coder:1.3b
+
+# Оптимальный вариант (рекомендуется)
+ollama pull deepseek-coder:6.7b
+
+# Максимальная производительность
+ollama pull deepseek-coder:33b
+```
+
+#### Для SQL запросов (рекомендуется)
+```bash
+# Специализированная модель
+ollama pull sqlcoder:7b
+
+# Альтернатива
+ollama pull codellama:7b-instruct
+```
+
+#### Для технических задач и DevOps (рекомендуется)
+```bash
+# Универсальная модель
+ollama pull mistral:7b-instruct
+
+# Альтернатива
+ollama pull llama3.1:8b
+```
+
+#### Универсальный набор (для разных задач)
+```bash
+# Генерация кода
+ollama pull deepseek-coder:6.7b
+
+# SQL запросы
+ollama pull sqlcoder:7b
+
+# Технические задачи
+ollama pull mistral:7b-instruct
+
+# Легкая модель для быстрых ответов
+ollama pull llama3.2:3b
+```
+
+### Где найти модели
+
+Все модели доступны через Ollama. Для просмотра доступных моделей:
 
 ```bash
+# Поиск моделей на сайте Ollama
+# https://ollama.com/library
+
+# Поиск моделей через командную строку (если есть интернет)
+ollama list
+```
+
+**Полезные ссылки:**
+- Библиотека моделей Ollama: https://ollama.com/library
+- DeepSeek Coder: https://ollama.com/library/deepseek-coder
+- CodeLlama: https://ollama.com/library/codellama
+- SQLCoder: https://ollama.com/library/sqlcoder
+- Qwen2.5 Coder: https://ollama.com/library/qwen2.5-coder
+
+### Команды для скачивания базовых моделей (на машине с интернетом)
+
+```bash
+# Базовые модели для тестирования
 ollama pull llama3.2:1b
 ollama pull llama3.2:3b
 ollama pull mistral:7b
 ollama pull qwen2.5:7b
 ollama pull phi3-mini
+
+# Специализированные модели для разработки
+ollama pull deepseek-coder:6.7b
+ollama pull codellama:7b-instruct
+ollama pull sqlcoder:7b
+ollama pull qwen2.5-coder:7b
 ```
 
 ## Решение проблем
